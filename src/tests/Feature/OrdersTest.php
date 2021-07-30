@@ -109,4 +109,26 @@ class OrdersTest extends TestCase
         $this->assertDatabaseHas('coins', ['value' => 0.1, 'stock' => 49, 'earned' => 0]);
         $this->assertDatabaseHas('coins', ['value' => 0.05, 'stock' => 100, 'earned' => 0]);
     }
+
+    /**
+     * Test for invalid inputs
+     *
+     * @return void
+     */
+    public function test_invalidInputs(): void
+    {
+        $this->post('order/insert-coin', ['value' => 2])
+            ->assertStatus(404)
+            ->assertJson([
+                'success' => false,
+                'message' => 'Invalid coin value'
+            ]);
+
+        $this->post('order/get', ['code' => 'LEMONADE'])
+            ->assertStatus(404)
+            ->assertJson([
+                'success' => false,
+                'message' => 'Invalid product code'
+            ]);
+    }
 }

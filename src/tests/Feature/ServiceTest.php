@@ -69,9 +69,7 @@ class ServiceTest extends TestCase
             ->assertStatus(404)
             ->assertJson([
                 'success' => false,
-                'data' => [
-                    'message' => 'Invalid product code'
-                ]
+                'message' => 'Invalid product code'
             ]);
 
         $this->assertDatabaseHas('products', ['code' => 'SODA', 'stock' => 3]);
@@ -112,9 +110,7 @@ class ServiceTest extends TestCase
             ->assertStatus(404)
             ->assertJson([
                 'success' => false,
-                'data' => [
-                    'message' => 'Invalid coin value'
-                ]
+                'message' => 'Invalid coin value'
             ]);
 
         $this->assertDatabaseHas('coins', ['value' => 1, 'stock' => 25]);
