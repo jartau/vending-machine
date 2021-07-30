@@ -16,3 +16,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::post('/order/insert-coin', [\App\Http\Controllers\OrderController::class, 'insertCoin']);
+Route::post('/order/get', [\App\Http\Controllers\OrderController::class, 'get']);
+Route::get('/order/return-coin', [\App\Http\Controllers\OrderController::class, 'returnCoin']);
+
+Route::get('/service/info', [\App\Http\Controllers\ServiceController::class, 'info']);
+Route::post('/service/add-product', [\App\Http\Controllers\ServiceController::class, 'addProduct']);
+Route::post('/service/add-coin', [\App\Http\Controllers\ServiceController::class, 'addCoin']);
+Route::get('/service/collect-coins', [\App\Http\Controllers\ServiceController::class, 'collectCoins']);
