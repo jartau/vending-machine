@@ -84,11 +84,6 @@ class OrderController extends Controller
                     'exchange' => array_map([Money::class, 'format'], $coins)
                 ]
             ]);
-        } catch (CoinException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], $e->getCode());
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
