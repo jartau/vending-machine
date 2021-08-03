@@ -1,13 +1,12 @@
 <?php
 
-namespace Tests\VendingMachine;
+namespace Tests\Unit\VendingMachine;
 
 use App\Exceptions\ProductException;
 use App\Models\Coin;
 use App\Models\Product;
 use App\Repositories\CoinRepository;
 use App\Repositories\ProductRepository;
-use App\VendingMachine\CoinCounter;
 use App\VendingMachine\VendingMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\VendingMachine;
+namespace Tests\Unit\VendingMachine;
 
 use App\Exceptions\ProductException;
 use App\Models\Product;

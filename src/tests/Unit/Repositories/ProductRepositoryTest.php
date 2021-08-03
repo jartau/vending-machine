@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Repositories;
+namespace Tests\Unit\Repositories;
 
 use App\Models\Product;
 use App\Repositories\ProductRepository;
