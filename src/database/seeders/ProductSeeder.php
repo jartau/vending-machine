@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class ProductSeeder extends Seeder
 {
@@ -15,19 +16,21 @@ class ProductSeeder extends Seeder
     {
         DB::table('products')->insert(
             [
-                'code' => 'WATER',
-                'price' => 0.65,
-                'stock' => 10,
-            ],
-            [
-                'code' => 'JUICE',
-                'price' => 1.00,
-                'stock' => 5,
-            ],
-            [
-                'code' => 'SODA',
-                'price' => 1.5,
-                'stock' => 3,
+                [
+                    'code' => 'WATER',
+                    'price' => 65,
+                    'stock' => 10,
+                ],
+                [
+                    'code' => 'JUICE',
+                    'price' => 100,
+                    'stock' => 5,
+                ],
+                [
+                    'code' => 'SODA',
+                    'price' => 150,
+                    'stock' => 3,
+                ]
             ]
         );
     }

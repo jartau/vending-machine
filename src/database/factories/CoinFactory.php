@@ -22,7 +22,7 @@ class CoinFactory extends Factory
     public function definition()
     {
         return [
-            'value' => $this->faker->randomFloat(2, 0, 1000),
+            'value' => $this->faker->unique()->numberBetween(0, 1000),
             'stock' => $this->faker->numberBetween(0, 1000),
             'earned' => $this->faker->numberBetween(0, 1000)
         ];

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class CoinSeeder extends Seeder
 {
@@ -13,22 +14,23 @@ class CoinSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('coins')->insert(
-            [
-                'value' => 0.05,
-                'stock' => 100
-            ],
-            [
-                'value' => 0.1,
-                'stock' => 50
-            ],
-            [
-                'value' => 0.25,
-                'stock' => 15
-            ],
-            [
-                'value' => 1,
-                'stock' => 25
+        DB::table('coins')->insert([
+                [
+                    'value' => 5,
+                    'stock' => 100
+                ],
+                [
+                    'value' => 10,
+                    'stock' => 50
+                ],
+                [
+                    'value' => 25,
+                    'stock' => 15
+                ],
+                [
+                    'value' => 100,
+                    'stock' => 25
+                ]
             ]
         );
     }
