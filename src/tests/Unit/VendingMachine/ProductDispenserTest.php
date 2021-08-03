@@ -63,4 +63,37 @@ class ProductDispenserTest extends TestCase
         $dispenser->chooseProduct('WATER');
         $this->assertEquals('WATER', $dispenser->getProductCode());
     }
+
+    public function testGetProductsStatus(): void
+    {
+        $product1 = Product::factory()->create();
+        $product2 = Product::factory()->create();
+        $product3 = Product::factory()->create();
+
+        $dispenser = new ProductDispenser(new ProductRepository());
+        $result = $dispenser->getProductsStatus();
+
+        $this->assertTrue($result->contains($product1));
+        $this->assertTrue($result->contains($product2));
+        $this->assertTrue($result->contains($product3));
+        $this->assertCount(3, $result);
+
+    }
+
+    public function testAddStock(): void
+    {
+        Product::factory()->create(['code' => 'WATER', 'stock' => 2]);
+        Product::factory()->create(['code' => 'JUICE', 'stock' => 2]);
+
+        $dispenser = new ProductDispenser(new ProductRepository());
+
+        $dispenser->addStock('WATER', 8);
+        $this->assertDatabaseHas('products', ['code' => 'WATER', 'stock' => 10]);
+
+        $this->expectException(ProductException::class);
+        $dispenser->addStock('JUICE', -5);
+
+        $this->expectException(ProductException::class);
+        $dispenser->addStock('MILK', 5);
+    }
 }

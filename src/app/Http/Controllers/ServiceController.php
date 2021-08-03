@@ -11,6 +11,7 @@ use App\Repositories\CoinRepository;
 use App\Repositories\CoinRepositoryInterface;
 use App\Repositories\ProductRepository;
 use App\Repositories\ProductRepositoryInterface;
+use App\VendingMachine\VendingMachine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -19,24 +20,27 @@ class ServiceController extends Controller
 
     private CoinRepository $coinRepository;
     private ProductRepository $productRepository;
+    private VendingMachine $vendingMachine;
 
     public function __construct(CoinRepositoryInterface $coinRepository, ProductRepositoryInterface $productRepository)
     {
         $this->coinRepository = $coinRepository;
         $this->productRepository = $productRepository;
+        $this->vendingMachine = new VendingMachine($coinRepository, $productRepository);
     }
 
     public function info(): JsonResponse
     {
         try {
-            $productsInfo = $this->productRepository->all()->map(function (Product $product) {
+
+            $productsInfo = $this->vendingMachine->getProductsStatus()->map(function (Product $product) {
                 return [
                     'code' => $product->code,
                     'stock' => $product->stock,
                 ];
             })->toArray();
 
-            $coinsInfo = $this->coinRepository->all()->map(function (Coin $coin) {
+            $coinsInfo = $this->vendingMachine->getCoinsStatus()->map(function (Coin $coin) {
                 return [
                     'value' => Money::format($coin->value),
                     'stock' => $coin->stock,
@@ -67,9 +71,7 @@ class ServiceController extends Controller
             $code = $request->get('code');
             $quantity = $request->get('quantity');
 
-            if (!$this->productRepository->addStockByCode($code, $quantity)) {
-                throw new ProductException('Invalid product code', 404);
-            }
+            $this->vendingMachine->addProducts($code, $quantity);
 
             return response()->json([
                 'success' => true,
@@ -96,9 +98,7 @@ class ServiceController extends Controller
             $value = Money::toInternalMoney($request->get('value'));
             $quantity = $request->get('quantity');
 
-            if (!$this->coinRepository->addStockByValue($value, $quantity)) {
-                throw new CoinException('Invalid coin value', 404);
-            }
+            $this->vendingMachine->addCoins($value, $quantity);
 
             return response()->json([
                 'success' => true,
@@ -121,7 +121,7 @@ class ServiceController extends Controller
     public function collectCoins(): JsonResponse
     {
         try {
-            $this->coinRepository->updateAll(['earned' => 0]);
+            $this->vendingMachine->collectCoins();
             return response()->json([
                 'success' => true,
                 'data' => []

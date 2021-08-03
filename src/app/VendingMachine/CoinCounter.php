@@ -6,9 +6,11 @@ namespace App\VendingMachine;
 
 use App\Exceptions\CoinException;
 use App\Models\Coin;
+use App\Models\Product;
 use App\Repositories\CoinRepository;
 use App\Repositories\CoinRepositoryInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Collection;
 
 class CoinCounter
 {
@@ -165,5 +167,35 @@ class CoinCounter
         });
 
         $this->resetCoins();
+    }
+
+    public function getCoinsStatus(): Collection
+    {
+        return $this->coinRepository->all();
+    }
+
+    /**
+     * @param int $value
+     * @param int $quantity
+     * @return bool
+     * @throws CoinException
+     */
+    public function addStock(int $value, int $quantity): bool
+    {
+        try {
+            $coin = $this->coinRepository->findByValue($value);
+        } catch (ModelNotFoundException $e) {
+            throw new CoinException('Invalid coin value', 404);
+        }
+
+        if ($coin->stock + $quantity < 0) {
+            throw new CoinException('Not enough coins', 400);
+        }
+        return $this->coinRepository->addStockByValue($value, $quantity);
+    }
+
+    public function collectCoins(): void
+    {
+        $this->coinRepository->updateAll(['earned' => 0]);
     }
 }

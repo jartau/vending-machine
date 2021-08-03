@@ -9,6 +9,7 @@ use App\Exceptions\ProductException;
 use App\Exceptions\VendingMachineException;
 use App\Repositories\CoinRepository;
 use App\Repositories\ProductRepository;
+use Illuminate\Support\Collection;
 
 class VendingMachine
 {
@@ -40,10 +41,19 @@ class VendingMachine
         return $this->counter->getChange();
     }
 
-
     public function returnCoins(): array
     {
         return $this->counter->returnCoins();
+    }
+
+    public function getCoinsStatus(): Collection
+    {
+        return $this->counter->getCoinsStatus();
+    }
+
+    public function getProductsStatus(): Collection
+    {
+        return $this->dispenser->getProductsStatus();
     }
 
     /**
@@ -67,6 +77,21 @@ class VendingMachine
     {
         $this->counter->updateCoinStatus();
         $this->dispenser->updateProductStock();
+    }
+
+    public function addCoins(int $value, int $quantity): bool
+    {
+        return $this->counter->addStock($value, $quantity);
+    }
+
+    public function addProducts(string $code, int $quantity): bool
+    {
+        return $this->dispenser->addStock($code, $quantity);
+    }
+
+    public function collectCoins(): void
+    {
+        $this->counter->collectCoins();
     }
 
 }

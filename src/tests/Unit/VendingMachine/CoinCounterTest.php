@@ -151,4 +151,48 @@ class CoinCounterTest extends TestCase
         $this->assertEquals([100, 25, 100], $counter->returnCoins());
         $this->assertEquals([], $counter->returnCoins());
     }
+
+    public function testGetCoinsStatus(): void
+    {
+        $coin1 = Coin::factory()->create(['value' => 100, 'stock' => 0, 'earned' => 0]);
+        $coin2 = Coin::factory()->create(['value' => 25, 'stock' => 2, 'earned' => 0]);
+
+        $counter = new CoinCounter(new CoinRepository());
+        $result = $counter->getCoinsStatus();
+        $this->assertTrue($result->contains($coin1));
+        $this->assertTrue($result->contains($coin2));
+        $this->assertCount(2, $result);
+
+    }
+
+    /**
+     * @throws CoinException
+     */
+    public function testAddStock(): void
+    {
+        Coin::factory()->create(['value' => 100, 'stock' => 1, 'earned' => 0]);
+        Coin::factory()->create(['value' => 25, 'stock' => 2, 'earned' => 0]);
+
+        $counter = new CoinCounter(new CoinRepository());
+
+        $counter->addStock(100, 3);
+        $this->assertDatabaseHas('coins', ['value' => 100, 'stock' => 4, 'earned' => 0]);
+        $this->expectException(CoinException::class);
+        $counter->addStock(25, -3);
+
+        $this->expectException(CoinException::class);
+        $counter->addStock(33, 5);
+    }
+
+    public function testCollectCoins(): void
+    {
+        Coin::factory()->create(['value' => 100, 'stock' => 1, 'earned' => 15]);
+        Coin::factory()->create(['value' => 25, 'stock' => 2, 'earned' => 20]);
+
+        $counter = new CoinCounter(new CoinRepository());
+        $counter->collectCoins();
+
+        $this->assertDatabaseHas('coins', ['value' => 100, 'stock' => 1, 'earned' => 0]);
+        $this->assertDatabaseHas('coins', ['value' => 25, 'stock' => 2, 'earned' => 0]);
+    }
 }

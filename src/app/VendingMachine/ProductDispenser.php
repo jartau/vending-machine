@@ -8,6 +8,7 @@ use App\Exceptions\ProductException;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Collection;
 
 class ProductDispenser
 {
@@ -90,6 +91,26 @@ class ProductDispenser
         $this->productRepository->update($this->selectedProduct->id, [
             'stock' => $this->selectedProduct->stock - 1
         ]);
+    }
+
+    public function getProductsStatus(): Collection
+    {
+        return $this->productRepository->all();
+    }
+
+    public function addStock(string $code, int $quantity): bool
+    {
+        try {
+            $product = $this->productRepository->findByCode($code);
+        } catch (ModelNotFoundException $e) {
+            throw new ProductException('Invalid product code', 404);
+        }
+
+        if ($product->stock + $quantity < 0) {
+            throw new ProductException('Not enough products', 400);
+        }
+
+        return $this->productRepository->addStockByCode($code, $quantity);
     }
 
 }

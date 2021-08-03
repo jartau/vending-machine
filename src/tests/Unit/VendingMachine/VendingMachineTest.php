@@ -7,6 +7,7 @@ use App\Models\Coin;
 use App\Models\Product;
 use App\Repositories\CoinRepository;
 use App\Repositories\ProductRepository;
+use App\VendingMachine\CoinCounter;
 use App\VendingMachine\VendingMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -97,5 +98,54 @@ class VendingMachineTest extends TestCase
 
         $machine->serveProduct('JUICE');
         $this->assertEquals('JUICE', $machine->getProductCode());
+    }
+
+    public function testGetCoinsStatus(): void
+    {
+        Coin::factory()->count(15)->create();
+
+        $machine = new VendingMachine(new CoinRepository(), new ProductRepository());
+        $result = $machine->getCoinsStatus();
+
+        $this->assertCount(15, $result);
+    }
+
+    public function testGetProductsStatus(): void
+    {
+        Product::factory()->count(10)->create();
+
+        $machine = new VendingMachine(new CoinRepository(), new ProductRepository());
+        $result = $machine->getProductsStatus();
+
+        $this->assertCount(10, $result);
+
+    }
+
+    public function testAddCoins(): void
+    {
+        Coin::factory()->create(['value' => 25, 'stock' => 2, 'earned' => 0]);
+        $machine = new VendingMachine(new CoinRepository(), new ProductRepository());
+        $machine->addCoins(25, 5);
+        $this->assertDatabaseHas('coins', ['value' => 25, 'stock' => 7, 'earned' => 0]);
+    }
+
+    public function testAddProducts(): void
+    {
+        Product::factory()->create(['code' => 'WATER', 'stock' => 2]);
+        $machine = new VendingMachine(new CoinRepository(), new ProductRepository());
+        $machine->addProducts('WATER', 5);
+        $this->assertDatabaseHas('products', ['code' => 'WATER', 'stock' => 7]);
+    }
+
+    public function testCollectCoins(): void
+    {
+        Coin::factory()->create(['value' => 100, 'stock' => 1, 'earned' => 15]);
+        Coin::factory()->create(['value' => 25, 'stock' => 2, 'earned' => 20]);
+
+        $machine = new VendingMachine(new CoinRepository(), new ProductRepository());
+        $machine->collectCoins();
+
+        $this->assertDatabaseHas('coins', ['value' => 100, 'stock' => 1, 'earned' => 0]);
+        $this->assertDatabaseHas('coins', ['value' => 25, 'stock' => 2, 'earned' => 0]);
     }
 }

@@ -64,12 +64,12 @@ class ServiceTest extends TestCase
                 'data' => []
             ]);
 
-//        $this->post('service/add-product', ['code' => 'SODA', 'quantity' => -5])
-//            ->assertStatus(400)
-//            ->assertJson([
-//                'success' => false,
-//                'message' => 'Not enough products'
-//            ]);
+        $this->post('service/add-product', ['code' => 'SODA', 'quantity' => -5])
+            ->assertStatus(400)
+            ->assertJson([
+                'success' => false,
+                'message' => 'Not enough products'
+            ]);
 
         $this->post('service/add-product', ['code' => 'MILK', 'quantity' => 5])
             ->assertStatus(404)
@@ -105,12 +105,12 @@ class ServiceTest extends TestCase
                 'data' => []
             ]);
 
-//        $this->post('service/add-coin', ['value' => 0.25, 'quantity' => -25])
-//            ->assertStatus(400)
-//            ->assertJson([
-//                'success' => false,
-//                'message' => 'Not enough coins'
-//            ]);
+        $this->post('service/add-coin', ['value' => 0.25, 'quantity' => -25])
+            ->assertStatus(400)
+            ->assertJson([
+                'success' => false,
+                'message' => 'Not enough coins'
+            ]);
 
         $this->post('service/add-coin', ['value' => 0.5, 'quantity' => 5])
             ->assertStatus(404)
