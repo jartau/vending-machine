@@ -10,4 +10,10 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = ['price', 'stock'];
+
+    public function hasStock(): bool
+    {
+        return $this->stock > 0;
+    }
+
 }

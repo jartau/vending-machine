@@ -14,9 +14,9 @@ class ProductRepositoryTest extends TestCase
 
     private ProductRepository $repo;
 
-    public function setUp(): void
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
-        parent::setUp();
+        parent::__construct($name, $data, $dataName);
         $this->repo = new ProductRepository();
     }
 
@@ -41,9 +41,4 @@ class ProductRepositoryTest extends TestCase
         $this->assertEquals(1 , Product::where('id', $prod->id)->where('price', 2)->where('stock', 5)->count());
     }
 
-    public function testFindByCode()
-    {
-        $prod = Product::factory()->create();
-        $this->assertInstanceOf(Product::class, $this->repo->findByCode($prod->code));
-    }
 }

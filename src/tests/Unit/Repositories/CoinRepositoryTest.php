@@ -3,6 +3,7 @@
 namespace Tests\Unit\Repositories;
 
 use App\Models\Coin;
+use App\Models\Product;
 use App\Repositories\CoinRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -14,9 +15,9 @@ class CoinRepositoryTest extends TestCase
 
     private CoinRepository $repo;
 
-    public function setUp(): void
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
-        parent::setUp();
+        parent::__construct($name, $data, $dataName);
         $this->repo = new CoinRepository();
     }
 
@@ -50,6 +51,7 @@ class CoinRepositoryTest extends TestCase
     public function testAll()
     {
         Coin::factory()->count(15)->create();
-        $this->assertCount(15, $this->repo->all());
+        $coins = $this->repo->all();
+        $this->assertCount(15, $coins);
     }
 }
