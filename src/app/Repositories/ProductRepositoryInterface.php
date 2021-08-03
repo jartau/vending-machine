@@ -11,4 +11,6 @@ interface ProductRepositoryInterface extends BaseRepositoryInterface
 
     public function findByCode(string $code): ?Model;
 
+    public function addStockByCode(string $code, int $quantity): bool;
+
 }

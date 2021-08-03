@@ -18,7 +18,7 @@ class CreateProductsTable extends Migration
             $table->timestamps();
             $table->string('code')->unique();
             $table->integer('price');
-            $table->integer('stock')->default(0);
+            $table->unsignedInteger('stock')->default(0);
         });
     }
 

@@ -16,9 +16,9 @@ class CreateCoinsTable extends Migration
         Schema::create('coins', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->integer('value')->unique();
-            $table->integer('stock');
-            $table->integer('earned')->default(0);
+            $table->unsignedInteger('value')->unique();
+            $table->unsignedInteger('stock');
+            $table->unsignedInteger('earned')->default(0);
         });
     }
 

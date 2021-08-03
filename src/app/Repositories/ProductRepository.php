@@ -7,17 +7,19 @@ namespace App\Repositories;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class ProductRepository implements ProductRepositoryInterface
 {
 
     /**
-     * Return all stored products in DB
+     * Return all stored products in DB ordered by order
+     * @param string $order
      * @return Collection
      */
-    public function all(): Collection
+    public function all(string $order = 'price'): Collection
     {
-        return Product::all();
+        return Product::orderByDesc($order)->get();
     }
 
     /**
@@ -41,4 +43,14 @@ class ProductRepository implements ProductRepositoryInterface
         return Product::where('code', $code)->firstOrFail();
     }
 
+    /**
+     * Increment the stock quantity of code product
+     * @param string $code
+     * @param int $quantity
+     * @return bool
+     */
+    public function addStockByCode(string $code, int $quantity): bool
+    {
+        return Product::where('code', $code)->update(['stock' => DB::raw('stock + ' . $quantity)]);
+    }
 }

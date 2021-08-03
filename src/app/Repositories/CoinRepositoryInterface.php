@@ -8,5 +8,11 @@ use App\Models\Coin;
 
 interface CoinRepositoryInterface extends BaseRepositoryInterface
 {
-    public function findByValue(float $value): Coin;
+
+    public function findByValue(int $value): Coin;
+
+    public function addStockByValue(int $value, int $quantity): bool;
+
+    public function updateAll(array $attributes): void;
+
 }

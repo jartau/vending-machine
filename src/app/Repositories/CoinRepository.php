@@ -6,17 +6,19 @@ namespace App\Repositories;
 
 use App\Models\Coin;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class CoinRepository implements CoinRepositoryInterface
 {
 
     /**
-     * Return all stored coins
+     * Return all stored coins ordered by order
+     * @param string $order
      * @return Collection
      */
-    public function all(): Collection
+    public function all(string $order = 'value'): Collection
     {
-        return Coin::all();
+        return Coin::orderBy($order)->get();
     }
 
     /**
@@ -33,12 +35,22 @@ class CoinRepository implements CoinRepositoryInterface
     /**
      * Return the coin by value
      * If product not exist trow a ModelNotFoundException
-     * @param float $value
+     * @param int $value
      * @return Coin
      */
-    public function findByValue(float $value): Coin
+    public function findByValue(int $value): Coin
     {
         return Coin::where('value', $value)->firstOrFail();
+    }
+
+    public function addStockByValue(int $value, int $quantity): bool
+    {
+        return Coin::where('value', $value)->update(['stock' => DB::raw('stock + ' . $quantity)]);
+    }
+
+    public function updateAll(array $attributes): void
+    {
+        Coin::query()->update($attributes);
     }
 
 }
