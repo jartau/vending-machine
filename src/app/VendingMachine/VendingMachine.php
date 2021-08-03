@@ -4,24 +4,69 @@
 namespace App\VendingMachine;
 
 
-use App\Models\Product;
+use App\Exceptions\CoinException;
+use App\Exceptions\ProductException;
+use App\Exceptions\VendingMachineException;
+use App\Repositories\CoinRepository;
+use App\Repositories\ProductRepository;
 
-class ControlPanel
+class VendingMachine
 {
-    private ProductDispender $dispender;
+    private CoinCounter $counter;
+    private ProductDispenser $dispenser;
 
-    public function __construct()
+    public function __construct(CoinRepository $coinRepository, ProductRepository $productRepository)
     {
-        $this->dispender = new ProductDispender();
+        $this->counter = new CoinCounter($coinRepository);
+        $this->dispenser = new ProductDispenser($productRepository);
     }
 
+    /**
+     * @param $value
+     * @throws CoinException
+     */
     public function insertCoin($value): void
     {
-        CoinCounter::insertCoin($value);
+        $this->counter->insertCoin($value);
     }
 
-    public function chooseProduct($code): Product
+    public function getProductCode(): string
     {
+        return $this->dispenser->getProductCode();
+    }
+
+    public function getChange(): array
+    {
+        return $this->counter->getChange();
+    }
+
+
+    public function returnCoins(): array
+    {
+        return $this->counter->returnCoins();
+    }
+
+    /**
+     * @param $code
+     * @throws CoinException
+     * @throws ProductException
+     */
+    public function serveProduct($code)
+    {
+        $this->dispenser->chooseProduct($code);
+
+        if ($this->counter->getInsertedAmount() < $this->dispenser->getProductPrice()) {
+            throw new ProductException('Not enough money', 400);
+        }
+
+        $this->counter->calcChange($this->dispenser->getProductPrice());
 
     }
+
+    public function updateStates(): void
+    {
+        $this->counter->updateCoinStatus();
+        $this->dispenser->updateProductStock();
+    }
+
 }

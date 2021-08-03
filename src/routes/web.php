@@ -18,7 +18,7 @@ Route::get('/', function () {
 });
 
 Route::post('/order/insert-coin', [\App\Http\Controllers\OrderController::class, 'insertCoin']);
-Route::post('/order/get', [\App\Http\Controllers\OrderController::class, 'get']);
+Route::post('/order/choose-product', [\App\Http\Controllers\OrderController::class, 'chooseProduct']);
 Route::get('/order/return-coin', [\App\Http\Controllers\OrderController::class, 'returnCoin']);
 
 Route::get('/service/info', [\App\Http\Controllers\ServiceController::class, 'info']);
