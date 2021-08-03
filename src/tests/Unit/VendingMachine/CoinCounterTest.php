@@ -119,22 +119,6 @@ class CoinCounterTest extends TestCase
     /**
      * @throws CoinException
      */
-    public function testGetInsertedCoins(): void
-    {
-        Coin::factory()->create(['value' => 100, 'stock' => 0, 'earned' => 0]);
-        Coin::factory()->create(['value' => 25, 'stock' => 2, 'earned' => 0]);
-
-        $counter = new CoinCounter(new CoinRepository());
-        $counter->insertCoin(100);
-        $counter->insertCoin(25);
-        $counter->insertCoin(100);
-
-        $this->assertEquals([100, 25, 100], $counter->getInsertedCoins());
-    }
-
-    /**
-     * @throws CoinException
-     */
     public function testReturnCoins(): void
     {
         Coin::factory()->create(['value' => 100, 'stock' => 0, 'earned' => 0]);

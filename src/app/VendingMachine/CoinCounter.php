@@ -5,8 +5,8 @@ namespace App\VendingMachine;
 
 
 use App\Exceptions\CoinException;
+use App\Helpers\SessionStack;
 use App\Models\Coin;
-use App\Models\Product;
 use App\Repositories\CoinRepository;
 use App\Repositories\CoinRepositoryInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -29,24 +29,19 @@ class CoinCounter
      */
     private array $change;
 
+    private SessionStack $coinStack;
+
     /**
      * CoinCounter constructor.
      * @param CoinRepositoryInterface $coinRepository
      */
     public function __construct(CoinRepositoryInterface $coinRepository)
     {
+        $this->coinStack = new SessionStack(self::SESSION_KEY);
         $this->coinRepository = $coinRepository;
         $this->change = [];
     }
 
-    /**
-     * Set the array coins into session
-     * @param array $coins
-     */
-    private function setInsertedCoins(array $coins): void
-    {
-        session([self::SESSION_KEY => $coins]);
-    }
 
     /**
      * Reset change and inserted coins lists
@@ -54,16 +49,7 @@ class CoinCounter
     private function resetCoins(): void
     {
         $this->change = [];
-        $this->setInsertedCoins([]);
-    }
-
-    /**
-     * Return the inserted coins list as array
-     * @return array
-     */
-    public function getInsertedCoins(): array
-    {
-        return session(self::SESSION_KEY, []);
+        $this->coinStack->reset();
     }
 
     /**
@@ -73,7 +59,7 @@ class CoinCounter
     public function getInsertedAmount(): int
     {
         $amount = 0;
-        foreach ($this->getInsertedCoins() as $value) {
+        foreach ($this->coinStack->get() as $value) {
             $amount += $value;
         }
         return $amount;
@@ -101,9 +87,8 @@ class CoinCounter
         } catch (ModelNotFoundException $e) {
             throw new CoinException('Invalid coin value', 404);
         }
-        $coins = $this->getInsertedCoins();
-        array_push($coins, $value);
-        $this->setInsertedCoins($coins);
+        $this->coinStack->push($value);
+
     }
 
     /**
@@ -112,7 +97,7 @@ class CoinCounter
      */
     public function returnCoins(): array
     {
-        $coins = $this->getInsertedCoins();
+        $coins = $this->coinStack->get();
         $this->resetCoins();
         return $coins;
     }
@@ -151,7 +136,7 @@ class CoinCounter
     public function updateCoinStatus(): void
     {
         $newStock = array_count_values($this->getChange());
-        $newEarned = array_count_values($this->getInsertedCoins());
+        $newEarned = array_count_values($this->coinStack->get());
 
         $this->coinRepository->all()->each(function(Coin $coin) use ($newStock, $newEarned) {
             $attributes = [];
