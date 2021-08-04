@@ -43,11 +43,21 @@ class CoinRepository implements CoinRepositoryInterface
         return Coin::where('value', $value)->firstOrFail();
     }
 
+    /**
+     * Add quantity stock at value coin
+     * @param int $value
+     * @param int $quantity
+     * @return bool
+     */
     public function addStockByValue(int $value, int $quantity): bool
     {
         return Coin::where('value', $value)->update(['stock' => DB::raw('stock + ' . $quantity)]);
     }
 
+    /**
+     * Set the attributes at all coin
+     * @param array $attributes
+     */
     public function updateAll(array $attributes): void
     {
         Coin::query()->update($attributes);

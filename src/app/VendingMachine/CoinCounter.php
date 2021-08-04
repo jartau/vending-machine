@@ -160,6 +160,8 @@ class CoinCounter
     }
 
     /**
+     * Add quantity stock at value coin (to decrease you can use negative quantities)
+     * trow a Coin Exception if value coin is not valid or there are not coins to remove
      * @param int $value
      * @param int $quantity
      * @return bool
@@ -179,6 +181,9 @@ class CoinCounter
         return $this->coinRepository->addStockByValue($value, $quantity);
     }
 
+    /**
+     * Set earned to zero at all coins
+     */
     public function collectCoins(): void
     {
         $this->coinRepository->updateAll(['earned' => 0]);

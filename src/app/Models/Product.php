@@ -11,6 +11,10 @@ class Product extends Model
 
     protected $fillable = ['price', 'stock'];
 
+    /**
+     * Return true if the stock of current product is greater than zero
+     * @return bool
+     */
     public function hasStock(): bool
     {
         return $this->stock > 0;

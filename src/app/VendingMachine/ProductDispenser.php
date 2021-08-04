@@ -93,11 +93,23 @@ class ProductDispenser
         ]);
     }
 
+    /**
+     * Return all products stored in DB
+     * @return Collection
+     */
     public function getProductsStatus(): Collection
     {
         return $this->productRepository->all();
     }
 
+    /**
+     * Add quantity stock at code product (to decrease you can use negative quantities)
+     * trow a Product Exception if product code is not valid or there are not products to remove
+     * @param string $code
+     * @param int $quantity
+     * @return bool
+     * @throws ProductException
+     */
     public function addStock(string $code, int $quantity): bool
     {
         try {
